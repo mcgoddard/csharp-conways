@@ -8,12 +8,6 @@ namespace conways
 {
     class Program
     {
-        public enum CellState
-        {
-            Dead,
-            Alive
-        };
-
         static void Main(string[] args)
         {
             // Display help message if requested
@@ -97,6 +91,11 @@ namespace conways
                         throw new ArgumentException("Invalid value for -n flag");
                     }
                 }
+                // Run simulation
+                var sim = new Simulation(iterationNumber, grid);
+                sim.Run();
+                // Output to file
+                // TODO : output to file
             }
         }
     }
