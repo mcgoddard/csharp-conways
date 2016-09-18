@@ -15,9 +15,12 @@ namespace conways
     class Simulation
     {
         #region Private members
+        // Immutable
         private readonly uint iterationNum;
         private readonly CellState[][] startingStates;
+        // Mutable
         private CellState[][] curStates;
+        private uint currentIter = 0;
         #endregion
         
         #region Constructors
