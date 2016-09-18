@@ -20,7 +20,7 @@ namespace conways
             if (args.Contains("--help"))
             {
                 Console.WriteLine("Conway's Game of Life - A C# implementation");
-                Console.WriteLine("\tUsage: conways [options] <number_of_iterations> <output_file>");
+                Console.WriteLine("\tUsage: conways [options] <output_file>");
                 Console.WriteLine("\t\t<number_of_interations>\t\t- The number of iterations of the game to run");
                 Console.WriteLine("\t\t<output_file>\t\t- The file to save output to");
                 Console.WriteLine("\tOptions:");
@@ -28,6 +28,7 @@ namespace conways
                 Console.WriteLine("\t\t-i\t\t- Provide a file containing a grid");
                 Console.WriteLine("\t\t-w\t\t- Provide a grid width");
                 Console.WriteLine("\t\t-h\t\t- Provide a grid height");
+                Console.WriteLine("\t\t-n\t\t- Provide a number of iterations to run");
             }
             else
             {
@@ -35,8 +36,8 @@ namespace conways
                 // Load input file if provided, otherwise generate grid
                 var grid = new CellState[0][];
                 var inputFlagPos = Array.IndexOf(args, "-i");
-                var gridHeight = -1;
-                var gridWidth = -1;
+                uint gridHeight = 0;
+                uint gridWidth = 0;
                 // Load input grid from file
                 if (inputFlagPos != -1 && inputFlagPos + 1 < args.Length - 3)
                 {
@@ -49,29 +50,23 @@ namespace conways
                     // Generate random grid
                     Console.WriteLine("Using randomly generated starting grid");
                     var heightFlagPos = Array.IndexOf(args, "-h");
-                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 3)
+                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 2 && !uint.TryParse(args[heightFlagPos + 1], out gridHeight))
                     {
-                        if (!Int32.TryParse(args[heightFlagPos + 1], out gridHeight))
-                        {
-                            throw new ArgumentException("Invalid value for grid height");
-                        }
+                        throw new ArgumentException("Invalid value for -h flag");
                     }
                     else
                     {
-                        gridHeight = r.Next(25, 100);
+                        gridHeight = (uint)r.Next(25, 100);
                     }
                     Console.WriteLine("Grid height: {0}", gridHeight);
                     var widthFlagPos = Array.IndexOf(args, "-w");
-                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 3)
+                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 2 && !uint.TryParse(args[widthFlagPos + 1], out gridWidth))
                     {
-                        if (!Int32.TryParse(args[widthFlagPos + 1], out gridWidth))
-                        {
-                            throw new ArgumentException("Invalid value for grid width");
-                        }
+                        throw new ArgumentException("Invalid value for -w flag");
                     }
                     else
                     {
-                        gridWidth = r.Next(25, 100);
+                        gridWidth = (uint)r.Next(25, 100);
                     }
                     Console.WriteLine("Grid width: {0}", gridWidth);
                     grid = new CellState[gridHeight][];
@@ -91,6 +86,16 @@ namespace conways
                         }
                     }
                     Console.WriteLine("Grid generated");
+                }
+                // Load iteration number
+                uint iterationNumber = 100;
+                var iterFlagPos = Array.IndexOf(args, "-n");
+                if (iterFlagPos != -1 && iterFlagPos + 1 <= args.Length - 2)
+                {
+                    if (!uint.TryParse(args[iterFlagPos + 1], out iterationNumber))
+                    {
+                        throw new ArgumentException("Invalid value for -n flag");
+                    }
                 }
             }
         }
