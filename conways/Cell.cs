@@ -48,7 +48,31 @@ namespace conways
         #region Private methods
         private Cell Rules(uint aliveCount)
         {
-            throw new NotImplementedException("Conway's cell rules not yet implemented");
+            Cell cell;
+            if (state == CellState.Alive)
+            {
+                if (aliveCount < 2)
+                {
+                    cell = new Cell(CellState.Dead);
+                }
+                else if (aliveCount < 4)
+                {
+                    cell = new Cell(CellState.Alive);
+                }
+                else
+                {
+                    cell = new Cell(CellState.Dead);
+                }
+            }
+            else if (aliveCount == 3)
+            {
+                cell = new Cell(CellState.Alive);
+            }
+            else
+            {
+                cell = new Cell(CellState.Dead);
+            }
+            return cell;
         }
         #endregion
     }

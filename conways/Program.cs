@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace conways
                 Console.WriteLine("\t\t-w\t\t- Provide a grid width");
                 Console.WriteLine("\t\t-h\t\t- Provide a grid height");
                 Console.WriteLine("\t\t-n\t\t- Provide a number of iterations to run");
+                Console.WriteLine("\t\t-p\t\t- Pause when finished");
             }
             else
             {
@@ -92,10 +94,21 @@ namespace conways
                     }
                 }
                 // Run simulation
+                Stopwatch s = new Stopwatch();
+                s.Start();
                 var sim = new Simulation(iterationNumber, grid);
                 sim.Run();
+                s.Stop();
                 // Output to file
                 // TODO : output to file
+                // Print stats
+                Console.WriteLine("Iterated {0} in {1}ms", gridHeight * gridWidth * iterationNumber, s.ElapsedMilliseconds);
+                // Pause
+                if (args.Contains("-p"))
+                {
+                    Console.WriteLine("Press <<enter>> to exit...");
+                    Console.ReadLine();
+                }
             }
         }
     }
