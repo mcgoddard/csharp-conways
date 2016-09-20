@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,19 +21,21 @@ namespace conways
         private readonly CellState[][] startingStates;
         private readonly int height;
         private readonly int width;
+        private readonly string outputDir;
         // Mutable
         private Cell[][] curStates;
         private uint currentIter = 0;
         #endregion
         
         #region Constructors
-        public Simulation (uint iterationNum, CellState[][] states)
+        public Simulation (uint iterationNum, CellState[][] states, string outputDir)
         {
             this.iterationNum = iterationNum;
             this.startingStates = states;
             this.curStates = states.Select(r => r.Select(s => new Cell(s)).ToArray()).ToArray();
             this.height = states.Length;
             this.width = states[0].Length;
+            this.outputDir = outputDir;
         }
         #endregion
 
@@ -64,6 +67,13 @@ namespace conways
                     }
                 }
                 curStates = newStates.Select(tcr => tcr.Select(tc => tc.Result).ToArray()).ToArray();
+                using (StreamWriter file = new StreamWriter(Path.Combine(outputDir, String.Format("{0}.csv", currentIter))))
+                {
+                    foreach (var row in curStates)
+                    {
+                        file.WriteLine(string.Join(",", row.Select(r => (int)r.State)));
+                    }
+                }
                 currentIter++;
             }
         }

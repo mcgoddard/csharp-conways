@@ -129,10 +129,17 @@ namespace conways
                         throw new ArgumentException("Invalid value for -n flag");
                     }
                 }
+                // Check output directory exists
+                var outputDir = args[args.Length - 1];
+                if (!Directory.Exists(outputDir))
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
+                Console.WriteLine(String.Format("Output directory set to \"{0}\"", outputDir));
                 // Run simulation
                 Stopwatch s = new Stopwatch();
                 s.Start();
-                var sim = new Simulation(iterationNumber, grid);
+                var sim = new Simulation(iterationNumber, grid, outputDir);
                 sim.Run();
                 s.Stop();
                 // Output to file
