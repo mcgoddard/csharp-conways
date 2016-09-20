@@ -8,8 +8,8 @@ namespace conways
 {
     enum CellState
     {
-        Dead,
-        Alive
+        Dead = 0,
+        Alive = 1
     };
 
     class Simulation

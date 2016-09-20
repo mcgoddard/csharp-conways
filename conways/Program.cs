@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,9 +38,44 @@ namespace conways
                 // Load input grid from file
                 if (inputFlagPos != -1 && inputFlagPos + 1 < args.Length - 3)
                 {
-                    Console.WriteLine("Using input file: {0}", args[inputFlagPos + 1]);
-                    // TODO : load grid from file
-                    throw new NotSupportedException("Grid loading is not currently supported");
+                    var inputFilePath = args[inputFlagPos + 1];
+                    Console.WriteLine("Using input file: {0}", inputFilePath);
+                    if (File.Exists(inputFilePath))
+                    {
+                        var tmpGrid = new List<CellState[]>();
+                        foreach (var line in File.ReadLines(inputFilePath))
+                        {
+                            var characters = line.Split(',');
+                            var cellStates = new CellState[characters.Length];
+                            for (int i = 0; i < characters.Length; i++)
+                            {
+                                try
+                                {
+                                    int parsedCharacter = -1;
+                                    if (int.TryParse(characters[i], out parsedCharacter))
+                                    {
+                                        cellStates[i] = (CellState)parsedCharacter;
+                                    }
+                                    else
+                                    {
+                                        throw new ArgumentException(String.Format("Invalid value in input file \"{0}\"", characters[i]));
+                                    }
+                                }
+                                catch (InvalidCastException ex)
+                                {
+                                    throw new AggregateException("Cannot parse input file", ex);
+                                }
+                            }
+                            tmpGrid.Add(cellStates);
+                        }
+                        grid = tmpGrid.ToArray();
+                        gridHeight = (uint)grid.Length;
+                        gridWidth = (uint)grid[0].Length;
+                    }
+                    else
+                    {
+                        throw new ArgumentException(String.Format("Input file \"{0}\" not found", inputFilePath));
+                    }
                 }
                 else
                 {
@@ -54,7 +90,6 @@ namespace conways
                     {
                         gridHeight = (uint)r.Next(25, 100);
                     }
-                    Console.WriteLine("Grid height: {0}", gridHeight);
                     var widthFlagPos = Array.IndexOf(args, "-w");
                     if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 2 && !uint.TryParse(args[widthFlagPos + 1], out gridWidth))
                     {
@@ -64,7 +99,6 @@ namespace conways
                     {
                         gridWidth = (uint)r.Next(25, 100);
                     }
-                    Console.WriteLine("Grid width: {0}", gridWidth);
                     grid = new CellState[gridHeight][];
                     for (int i = 0; i < gridHeight; i++)
                     {
@@ -83,6 +117,8 @@ namespace conways
                     }
                     Console.WriteLine("Grid generated");
                 }
+                Console.WriteLine("Grid height: {0}", gridHeight);
+                Console.WriteLine("Grid width: {0}", gridWidth);
                 // Load iteration number
                 uint iterationNumber = 100;
                 var iterFlagPos = Array.IndexOf(args, "-n");
