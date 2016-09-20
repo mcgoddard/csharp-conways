@@ -137,6 +137,7 @@ namespace conways
                         throw new ArgumentException("Invalid value for -n flag");
                     }
                 }
+                Console.WriteLine(String.Format("Running {0} iterations", iterationNumber));
                 // Check output directory exists
                 var outputDir = args[args.Length - 1];
                 if (!Directory.Exists(outputDir))

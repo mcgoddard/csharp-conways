@@ -67,7 +67,8 @@ namespace conways
                     }
                 }
                 curStates = newStates.Select(tcr => tcr.Select(tc => tc.Result).ToArray()).ToArray();
-                using (StreamWriter file = new StreamWriter(Path.Combine(outputDir, String.Format("{0}.csv", currentIter))))
+                var filePath = Path.Combine(outputDir, String.Format("{0}.csv", currentIter));
+                using (StreamWriter file = new StreamWriter(filePath))
                 {
                     foreach (var row in curStates)
                     {
