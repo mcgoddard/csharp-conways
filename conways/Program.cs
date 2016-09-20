@@ -82,21 +82,29 @@ namespace conways
                     // Generate random grid
                     Console.WriteLine("Using randomly generated starting grid");
                     var heightFlagPos = Array.IndexOf(args, "-h");
-                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 2 && !uint.TryParse(args[heightFlagPos + 1], out gridHeight))
+                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 2)
                     {
-                        throw new ArgumentException("Invalid value for -h flag");
+                        if (!uint.TryParse(args[heightFlagPos + 1], out gridHeight))
+                        {
+                            throw new ArgumentException("Invalid value for -h flag");
+                        }
                     }
                     else
                     {
+                        Console.WriteLine("Using random grid height");
                         gridHeight = (uint)r.Next(25, 100);
                     }
                     var widthFlagPos = Array.IndexOf(args, "-w");
-                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 2 && !uint.TryParse(args[widthFlagPos + 1], out gridWidth))
+                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 2)
                     {
-                        throw new ArgumentException("Invalid value for -w flag");
+                        if (!uint.TryParse(args[widthFlagPos + 1], out gridWidth))
+                        {
+                            throw new ArgumentException("Invalid value for -w flag");
+                        }
                     }
                     else
                     {
+                        Console.WriteLine("Using random grid width");
                         gridWidth = (uint)r.Next(25, 100);
                     }
                     grid = new CellState[gridHeight][];
