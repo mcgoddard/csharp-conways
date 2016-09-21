@@ -151,8 +151,6 @@ namespace conways
                 var sim = new Simulation(iterationNumber, grid, outputDir);
                 sim.Run();
                 s.Stop();
-                // Output to file
-                // TODO : output to file
                 // Print stats
                 Console.WriteLine("Iterated {0} in {1}ms", gridHeight * gridWidth * iterationNumber, s.ElapsedMilliseconds);
                 // Pause
