@@ -44,10 +44,10 @@ namespace conways
         {
             while (currentIter < iterationNum)
             {
-                Task<Cell>[][] newStates = new Task<Cell>[height][];
+                Cell[][] newStates = new Cell[height][];
                 for (int i = 0; i < height; i++)
                 {
-                    newStates[i] = new Task<Cell>[width];
+                    newStates[i] = new Cell[width];
                     for (int j = 0; j < width; j++)
                     {
                         var tmpI = i;
@@ -63,10 +63,10 @@ namespace conways
                             };
 
                         }
-                        newStates[i][j] = Task.Factory.StartNew(() => curStates[tmpI][tmpJ].Iterate(neighbours));
+                        newStates[i][j] = curStates[tmpI][tmpJ].Iterate(neighbours);
                     }
                 }
-                curStates = newStates.Select(tcr => tcr.Select(tc => tc.Result).ToArray()).ToArray();
+                curStates = newStates;
                 var filePath = Path.Combine(outputDir, String.Format("{0}.csv", currentIter));
                 using (StreamWriter file = new StreamWriter(filePath))
                 {
