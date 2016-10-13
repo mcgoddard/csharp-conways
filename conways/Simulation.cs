@@ -45,15 +45,16 @@ namespace conways
         {
             while (currentIter < iterationNum)
             {
-                var rowTasks = new Task<Cell[]>[height];
+                var newStates = new Cell[height][];
+                var threads = new Thread[height * width];
                 for (int i = 0; i < height; i++)
                 {
-                    var newStates = new Task<Cell>[width];
                     var tmpI = i;
+                    newStates[tmpI] = new Cell[width];
                     for (int j = 0; j < width; j++)
                     {
                         var tmpJ = j;
-                        newStates[tmpJ] = Task.Factory.StartNew(() =>
+                        threads[(tmpI * width) + tmpJ] = new Thread(new ThreadStart(() =>
                         {
                             var neighbours = new Cell[3][];
                             for (int k = -1; k <= 1; k++)
@@ -65,17 +66,16 @@ namespace conways
                                     ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ + 1 < width)) ? curStates[tmpI + k][tmpJ + 1] : new Cell(CellState.Dead),
                                 };
                             }
-                            return curStates[tmpI][tmpJ].Iterate(neighbours);
-                        });
+                            newStates[tmpI][tmpJ] = curStates[tmpI][tmpJ].Iterate(neighbours);
+                        }));
+                        threads[(tmpI * width) + tmpJ].Start();
                     }
-                    rowTasks[tmpI] = Task.Factory.StartNew(() =>
-                    {
-                        Task.WaitAll(newStates);
-                        return newStates.Select(c => c.Result).ToArray();
-                    });
                 }
-                Task.WaitAll(rowTasks);
-                curStates = rowTasks.Select(rt => rt.Result).ToArray();
+                foreach (var t in threads)
+                {
+                    t.Join();
+                }
+                curStates = newStates;
                 var filePath = Path.Combine(outputDir, String.Format("{0}.csv", currentIter));
                 using (StreamWriter file = new StreamWriter(filePath))
                 {
