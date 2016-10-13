@@ -51,26 +51,23 @@ namespace conways
                     var tmpI = i;
                     rowTasks[tmpI] = Task.Factory.StartNew(() =>
                     {
-                        var newStates = new Task<Cell>[width];
+                        var newStates = new Cell[width];
                         for (int j = 0; j < width; j++)
                         {
                             var tmpJ = j;
-                            newStates[tmpJ] = Task.Factory.StartNew(() =>
+                            var neighbours = new Cell[3][];
+                            for (int k = -1; k <= 1; k++)
                             {
-                                var neighbours = new Cell[3][];
-                                for (int k = -1; k <= 1; k++)
+                                neighbours[k + 1] = new Cell[]
                                 {
-                                    neighbours[k + 1] = new Cell[]
-                                    {
-                                        ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ - 1 > 0)) ? curStates[tmpI + k][tmpJ - 1] : new Cell(CellState.Dead),
-                                        ((tmpI + k >= 0)  && (tmpI + k < height)) ? curStates[tmpI + k][tmpJ] : new Cell(CellState.Dead),
-                                        ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ + 1 < width)) ? curStates[tmpI + k][tmpJ + 1] : new Cell(CellState.Dead),
-                                    };
-                                }
-                                return curStates[tmpI][tmpJ].Iterate(neighbours);
-                            });
+                                    ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ - 1 > 0)) ? curStates[tmpI + k][tmpJ - 1] : new Cell(CellState.Dead),
+                                    ((tmpI + k >= 0)  && (tmpI + k < height)) ? curStates[tmpI + k][tmpJ] : new Cell(CellState.Dead),
+                                    ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ + 1 < width)) ? curStates[tmpI + k][tmpJ + 1] : new Cell(CellState.Dead),
+                                };
+                            }
+                            newStates[tmpJ] = curStates[tmpI][tmpJ].Iterate(neighbours);
                         }
-                        return newStates.Select(c => c.Result).ToArray();
+                        return newStates;
                     });
                 }
                 Task.WaitAll(rowTasks);
