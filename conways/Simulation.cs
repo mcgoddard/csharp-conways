@@ -44,29 +44,37 @@ namespace conways
         {
             while (currentIter < iterationNum)
             {
-                Task<Cell>[][] newStates = new Task<Cell>[height][];
+                var rowTasks = new Task<Cell[]>[height];
                 for (int i = 0; i < height; i++)
                 {
-                    newStates[i] = new Task<Cell>[width];
+                    var newStates = new Task<Cell>[width];
+                    var tmpI = i;
                     for (int j = 0; j < width; j++)
                     {
-                        var tmpI = i;
                         var tmpJ = j;
-                        var neighbours = new Cell[3][];
-                        for (int k = -1; k <= 1; k++)
+                        newStates[tmpJ] = Task.Factory.StartNew(() =>
                         {
-                            neighbours[k + 1] = new Cell[]
+                            var neighbours = new Cell[3][];
+                            for (int k = -1; k <= 1; k++)
                             {
-                                ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ - 1 > 0)) ? curStates[tmpI + k][tmpJ - 1] : new Cell(CellState.Dead),
-                                ((tmpI + k >= 0)  && (tmpI + k < height)) ? curStates[tmpI + k][tmpJ] : new Cell(CellState.Dead),
-                                ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ + 1 < width)) ? curStates[tmpI + k][tmpJ + 1] : new Cell(CellState.Dead),
-                            };
-
-                        }
-                        newStates[i][j] = Task.Factory.StartNew(() => curStates[tmpI][tmpJ].Iterate(neighbours));
+                                neighbours[k + 1] = new Cell[]
+                                {
+                                    ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ - 1 > 0)) ? curStates[tmpI + k][tmpJ - 1] : new Cell(CellState.Dead),
+                                    ((tmpI + k >= 0)  && (tmpI + k < height)) ? curStates[tmpI + k][tmpJ] : new Cell(CellState.Dead),
+                                    ((tmpI + k >= 0) && (tmpI + k < height) && (tmpJ + 1 < width)) ? curStates[tmpI + k][tmpJ + 1] : new Cell(CellState.Dead),
+                                };
+                            }
+                            return curStates[tmpI][tmpJ].Iterate(neighbours);
+                        });
                     }
+                    rowTasks[tmpI] = Task.Factory.StartNew(() =>
+                    {
+                        Task.WaitAll(newStates);
+                        return newStates.Select(c => c.Result).ToArray();
+                    });
                 }
-                curStates = newStates.Select(tcr => tcr.Select(tc => tc.Result).ToArray()).ToArray();
+                Task.WaitAll(rowTasks);
+                curStates = rowTasks.Select(rt => rt.Result).ToArray();
                 var filePath = Path.Combine(outputDir, String.Format("{0}.csv", currentIter));
                 using (StreamWriter file = new StreamWriter(filePath))
                 {
