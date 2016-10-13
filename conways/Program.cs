@@ -147,9 +147,6 @@ namespace conways
                 }
                 Console.WriteLine(String.Format("Output directory set to \"{0}\"", outputDir));
                 // Run simulation
-                //int workerThreads, complete;
-                //ThreadPool.GetMinThreads(out workerThreads, out complete);
-                //ThreadPool.SetMinThreads(100, complete);
                 Stopwatch s = new Stopwatch();
                 s.Start();
                 var sim = new Simulation(iterationNumber, grid, outputDir);
