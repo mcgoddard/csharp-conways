@@ -84,7 +84,7 @@ namespace conways
                     // Generate random grid
                     Console.WriteLine("Using randomly generated starting grid");
                     var heightFlagPos = Array.IndexOf(args, "-h");
-                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 2)
+                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 1)
                     {
                         if (!uint.TryParse(args[heightFlagPos + 1], out gridHeight))
                         {
@@ -97,7 +97,7 @@ namespace conways
                         gridHeight = (uint)r.Next(25, 100);
                     }
                     var widthFlagPos = Array.IndexOf(args, "-w");
-                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 2)
+                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 1)
                     {
                         if (!uint.TryParse(args[widthFlagPos + 1], out gridWidth))
                         {
@@ -132,7 +132,7 @@ namespace conways
                 // Load iteration number
                 uint iterationNumber = 100;
                 var iterFlagPos = Array.IndexOf(args, "-n");
-                if (iterFlagPos != -1 && iterFlagPos + 1 <= args.Length - 2)
+                if (iterFlagPos != -1 && iterFlagPos + 1 <= args.Length - 1)
                 {
                     if (!uint.TryParse(args[iterFlagPos + 1], out iterationNumber))
                     {
@@ -143,7 +143,7 @@ namespace conways
                 // Check output directory exists
                 string outputDir = null;
                 var outputFlagPos = Array.IndexOf(args, "-o");
-                if (outputFlagPos != -1 && outputFlagPos + 1 <= args.Length - 2)
+                if (outputFlagPos != -1 && outputFlagPos + 1 <= args.Length - 1)
                 {
                     outputDir = args[outputFlagPos + 1];
                     if (!Directory.Exists(outputDir))
