@@ -16,7 +16,7 @@ namespace conways
             if (args.Contains("--help"))
             {
                 Console.WriteLine("Conway's Game of Life - A C# implementation");
-                Console.WriteLine("\tUsage: conways [options] <output_file>");
+                Console.WriteLine("\tUsage: conways [options]");
                 Console.WriteLine("\t\t<number_of_interations>\t\t- The number of iterations of the game to run");
                 Console.WriteLine("\t\t<output_file>\t\t- The file to save output to");
                 Console.WriteLine("\tOptions:");
@@ -26,6 +26,7 @@ namespace conways
                 Console.WriteLine("\t\t-h\t\t- Provide a grid height");
                 Console.WriteLine("\t\t-n\t\t- Provide a number of iterations to run");
                 Console.WriteLine("\t\t-p\t\t- Pause when finished");
+                Console.WriteLine("\t\t-o\t\t- Output to directory");
             }
             else
             {
@@ -36,7 +37,7 @@ namespace conways
                 uint gridHeight = 0;
                 uint gridWidth = 0;
                 // Load input grid from file
-                if (inputFlagPos != -1 && inputFlagPos + 1 < args.Length - 3)
+                if (inputFlagPos != -1 && inputFlagPos + 1 < args.Length - 1)
                 {
                     var inputFilePath = args[inputFlagPos + 1];
                     Console.WriteLine("Using input file: {0}", inputFilePath);
@@ -82,7 +83,7 @@ namespace conways
                     // Generate random grid
                     Console.WriteLine("Using randomly generated starting grid");
                     var heightFlagPos = Array.IndexOf(args, "-h");
-                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 2)
+                    if (heightFlagPos != -1 && heightFlagPos + 1 <= args.Length - 1)
                     {
                         if (!uint.TryParse(args[heightFlagPos + 1], out gridHeight))
                         {
@@ -95,7 +96,7 @@ namespace conways
                         gridHeight = (uint)r.Next(25, 100);
                     }
                     var widthFlagPos = Array.IndexOf(args, "-w");
-                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 2)
+                    if (widthFlagPos != -1 && widthFlagPos + 1 <= args.Length - 1)
                     {
                         if (!uint.TryParse(args[widthFlagPos + 1], out gridWidth))
                         {
@@ -130,7 +131,7 @@ namespace conways
                 // Load iteration number
                 uint iterationNumber = 100;
                 var iterFlagPos = Array.IndexOf(args, "-n");
-                if (iterFlagPos != -1 && iterFlagPos + 1 <= args.Length - 2)
+                if (iterFlagPos != -1 && iterFlagPos + 1 <= args.Length - 1)
                 {
                     if (!uint.TryParse(args[iterFlagPos + 1], out iterationNumber))
                     {
@@ -139,10 +140,15 @@ namespace conways
                 }
                 Console.WriteLine(String.Format("Running {0} iterations", iterationNumber));
                 // Check output directory exists
-                var outputDir = args[args.Length - 1];
-                if (!Directory.Exists(outputDir))
+                string outputDir = null;
+                var outputFlagPos = Array.IndexOf(args, "-o");
+                if (outputFlagPos != -1 && outputFlagPos + 1 <= args.Length - 1)
                 {
-                    Directory.CreateDirectory(outputDir);
+                    outputDir = args[outputFlagPos + 1];
+                    if (!Directory.Exists(outputDir))
+                    {
+                        Directory.CreateDirectory(outputDir);
+                    }
                 }
                 Console.WriteLine(String.Format("Output directory set to \"{0}\"", outputDir));
                 // Run simulation
