@@ -17,7 +17,7 @@ namespace conways
             if (args.Contains("--help"))
             {
                 Console.WriteLine("Conway's Game of Life - A C# implementation");
-                Console.WriteLine("\tUsage: conways [options] <output_file>");
+                Console.WriteLine("\tUsage: conways [options]");
                 Console.WriteLine("\t\t<number_of_interations>\t\t- The number of iterations of the game to run");
                 Console.WriteLine("\t\t<output_file>\t\t- The file to save output to");
                 Console.WriteLine("\tOptions:");
@@ -27,6 +27,7 @@ namespace conways
                 Console.WriteLine("\t\t-h\t\t- Provide a grid height");
                 Console.WriteLine("\t\t-n\t\t- Provide a number of iterations to run");
                 Console.WriteLine("\t\t-p\t\t- Pause when finished");
+                Console.WriteLine("\t\t-o\t\t- Output directory");
             }
             else
             {
@@ -140,16 +141,29 @@ namespace conways
                 }
                 Console.WriteLine(String.Format("Running {0} iterations", iterationNumber));
                 // Check output directory exists
-                var outputDir = args[args.Length - 1];
-                if (!Directory.Exists(outputDir))
+                string outputDir = null;
+                var outputFlagPos = Array.IndexOf(args, "-o");
+                if (outputFlagPos != -1 && outputFlagPos + 1 <= args.Length - 2)
                 {
-                    Directory.CreateDirectory(outputDir);
+                    outputDir = args[outputFlagPos + 1];
+                    if (!Directory.Exists(outputDir))
+                    {
+                        Directory.CreateDirectory(outputDir);
+                    }
                 }
                 Console.WriteLine(String.Format("Output directory set to \"{0}\"", outputDir));
                 // Run simulation
                 Stopwatch s = new Stopwatch();
                 s.Start();
-                var sim = new Simulation(iterationNumber, grid, outputDir);
+                Simulation sim;
+                if (outputDir != null)
+                {
+                    sim = new Simulation(iterationNumber, grid, outputDir);
+                }
+                else
+                {
+                    sim = new Simulation(iterationNumber, grid);
+                }
                 sim.Run();
                 s.Stop();
                 // Print stats

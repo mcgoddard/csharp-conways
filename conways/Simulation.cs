@@ -27,8 +27,12 @@ namespace conways
         private Cell[][] curStates;
         private uint currentIter = 0;
         #endregion
-        
+
         #region Constructors
+        public Simulation(uint iterationNum, CellState[][] states) : this(iterationNum, states, null)
+        {
+        }
+
         public Simulation (uint iterationNum, CellState[][] states, string outputDir)
         {
             this.iterationNum = iterationNum;
@@ -72,12 +76,15 @@ namespace conways
                 }
                 Task.WaitAll(rowTasks);
                 curStates = rowTasks.Select(rt => rt.Result).ToArray();
-                var filePath = Path.Combine(outputDir, String.Format("{0}.csv", currentIter));
-                using (StreamWriter file = new StreamWriter(filePath))
+                if (outputDir != null)
                 {
-                    foreach (var row in curStates)
+                    var filePath = Path.Combine(outputDir, String.Format("{0}.csv", currentIter));
+                    using (StreamWriter file = new StreamWriter(filePath))
                     {
-                        file.WriteLine(string.Join(",", row.Select(r => (int)r.State)));
+                        foreach (var row in curStates)
+                        {
+                            file.WriteLine(string.Join(",", row.Select(r => (int)r.State)));
+                        }
                     }
                 }
                 currentIter++;
